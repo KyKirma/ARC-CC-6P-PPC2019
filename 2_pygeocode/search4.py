@@ -1,5 +1,6 @@
 import socket
 import ssl
+import json
 from urllib.parse import quote_plus
 
 request_text = """\
@@ -22,7 +23,17 @@ def geocode(address):
                 if not more:
                     break
                 raw_reply += more
-            print(raw_reply.decode('utf-8'))
+            reply = raw_reply.decode('utf-8')
+            # Separar cabeçalho do corpo da resposta
+            header, body = reply.split('\r\n\r\n', 1)
+            
+            # Processar o JSON
+            items = json.loads(body)
+            for x, item in enumerate(items, start=1):
+                cep = item["display_name"].split(',')[-2].strip()
+                print(f"    Resultado {x}:")
+                print(f"        CEP: {cep}")
+                print(f"        (Latitude, Longitude): ({item['lat']}, {item['lon']})")
 
 if __name__ == '__main__':
     geocode('Belarmino Vilela Junqueira, Ituiutaba, MG')
