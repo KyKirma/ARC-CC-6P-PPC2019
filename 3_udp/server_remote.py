@@ -13,7 +13,7 @@ def server(interface, port):
         data, address = sock.recvfrom(MAX_BYTES)
         # Sorteando um número para decidir se
         # o pacote será descartado ou não.
-        if random.random() < 0.5:
+        if random.random() < 1:
             print('Pretending to drop packet from {}'.format(address))
             continue
         text = data.decode('ascii')
