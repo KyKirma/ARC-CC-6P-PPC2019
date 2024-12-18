@@ -12,19 +12,22 @@ def client(hostname, port):
     print('Client socket name is {}'.format(sock.getsockname()))
 
     delay = 0.1  # atraso em segundos
-    text = 'This is another message'
+    text = input('Login: ') # Solicita o login do usuário
     data = text.encode('ascii')
+
+    sock.send(data)
+    print('Tentando entrar na sala do jogo...')
 
     while True:
         # O cliente envia os dados e fica aguardando a resposta.
         # Um timeout é configurado para a espera.
         # Caso o timeout seja alcaçado, um novo envio é realizado.
-        sock.send(data)
-        print('Waiting up to {} seconds for a reply'.format(delay))
+        
         sock.settimeout(delay)
 
         try:
             data = sock.recv(MAX_BYTES)
+
         except socket.timeout as exc:
             # se a resposta não for recebida dentro do intervalo
             # estabelecido, a exceção é acionada e o intervalo de
@@ -35,11 +38,10 @@ def client(hostname, port):
             # desiste da solicitação
             if delay > 2.0:
                 raise RuntimeError('I think the server is down') from exc
-        else:
-            break   # Se a resposta é recebida, saímos do loop.
 
-    print('The server says {!r}'.format(data.decode('ascii')))
-
+        # Recebe a resposta
+        print(f'{data.decode('ascii')}')
+        input()
 
 if __name__ == '__main__':
-    client('192.168.52.20', 1060)
+    client('192.168.52.7', 1060)
